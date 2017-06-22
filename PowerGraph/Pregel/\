@@ -1,0 +1,51 @@
+#include<stdio.h>
+#include<stdlib.h>
+#include<sys/msg.h>
+#include<unistd.h>
+#include<sys/types.h>
+
+//to create a unique key
+#define MSG_FILE "/etc/passwd"
+
+struct msg_form {
+     long mtype;
+     long value;
+};
+
+int main()
+{
+     int vertex_num = 0;
+     int i=0;
+     int msqid;
+     key_t key;
+     struct msg_form msg;
+
+     //get key value
+     if((key = ftok(MSG_FILE,'z')) < 0)
+     {
+           perror("ftok error");
+           exit(1);
+     }
+     
+     printf("Message Queue - Server key is: %d.\n", key);
+
+     //create message queue
+     if ((msqid = msgget(key, IPC_CREAT|0777)) == -1)
+     {
+           perror("msgget error");
+           exit(1);
+     }
+
+     printf("My msqid is: %d.\n", msqid);
+     printf("My pid is: %d.\n", getpid());
+
+     for(i=0; i<vertext_num; ++i){
+          if( fork() == 0 ) {
+               execl("/home/victor/ipc/read_fifo","read_fifo",NULL);
+               /* 如果exec函数返回，表明没有正常执行命令，打印错误信息*/
+               fflush(stdout);
+               perror( command );
+               exit( errno );
+          }
+     }
+}

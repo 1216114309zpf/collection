@@ -1,0 +1,23 @@
+PROG = launcher vertex
+CC = g++
+LD = g++
+CFLAGS = -g -Wall
+
+
+OBJS = launcher.o vertex.o
+
+all : $(PROG)
+
+launcher: launcher.o
+	$(LD) -o $@ launcher.o
+
+vertex: vertex.o
+	$(LD) -o $@ vertex.o
+
+
+%.o: %.c
+	$(CC) $(CFLAGS) -o $@ -c $<
+
+clean:
+	rm -rf *.o $(PROG)
+	
