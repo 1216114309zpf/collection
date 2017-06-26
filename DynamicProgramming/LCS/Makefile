@@ -4,12 +4,12 @@ CC = g++
 LD = g++
 CFLAGS = -g -Wall
 
-OBJS = BottomUp.o  TopDown.o BottomUpWithSolution
+OBJS = BottomUp.o   BottomUpWithSolution.o TopDown.o
 
 all: $(PROG)
 
-$(PROG): $(OBJS)
-	$(LD) $(LDLIBS) -o $@ $<
+%: %.o
+	$(LD)  -o $@ $<
 
 %.o: %.c
 	$(CC) $(CFLAGS) -o $@ -c $<
