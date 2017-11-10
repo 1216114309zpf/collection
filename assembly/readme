@@ -1,0 +1,7 @@
+this directory contains assembly code of:
+     printf("Hello world!");
+and a script to compile as ELF form.
+
+the assembly code contains two system calls:
+    write
+    exit
