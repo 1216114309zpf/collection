@@ -1,32 +1,31 @@
 /*
 1, priority.
      ( )  0
-     ^    1
-     / *  2
-     + =  3
+     ^    1 right-associative
+     / *  2 left-associative
+     + =  3 left-associative
 2, use two stacks: one for operators(optstk) and another for numbers(intstk);
-3, when '^' is met, add it to optstk directly;
-4, when '*' or '/' is met, calculate all '^'s on top of stack from left to right before add '*' or '/' to optstk;
-5, when '+' or '-' is met, calculate all '^'s on top of stack from left to right, then calculate all '*'s and '/'s
-   on top of stack from left to right, finally add '+' or '-' to opstk;
+3, when '^' is met, add it to optstk directly since its right associative and we don't kwon whether there is ^ on
+   its right yet;
+4, when '*' or '/' is met, pop and calculate operators from optstk until we meet '(' or '+' or '-' or optstkis empty;
+5, when '+' or '-' is met, pop and calculate operators from optstk until we meet '(' or optstk is empty;
 5, when '(' is met, add it to number stack directly;
-6, when ')' is met, all the operator between '(' and ')' should be calculated immediately from left to right;
+6, when ')' is met, pop and calculate operators from optstk until we meet '('
 7, above rules makes sure that priorities of operators on optstk is decremental from bottom to top of the stack,
-   of course in each pair of '(' and ')';
-8, reverse order of tokens first so that the "from left to right" can be implemented easily. 
+   and at any time there is at most one operator of each priority except '^', fortunately '^' is right associative.
 */
+
 class Solution {
 public:
     enum op{PLUS, MINUS, TIME, DIVIDE, POWER, PARENT_LEFT, PARENT_RIGHT};
     int calculate(string s) {
         vector<string> tokens = parse(s);
-        reverse(tokens.begin(), tokens.end());
         stack<op> opstk;
         stack<int> intstk;
         for(int i = 0; i < tokens.size(); i++){
-            if(tokens[i] == ")"){
+            if(tokens[i] == "("){
                 opstk.push(PARENT_LEFT);
-            }else if(tokens[i] == "("){
+            }else if(tokens[i] == ")"){
                 while(opstk.top() != PARENT_LEFT){
                     calculateOnce(intstk, opstk);
                 }
@@ -34,12 +33,12 @@ public:
             }else if(tokens[i] == "^"){
                 opstk.push(POWER);
             }else if(tokens[i] == "*" or tokens[i] == "/"){
-                while(!opstk.empty() and opstk.top() == POWER){
+                while(!opstk.empty() and opstk.top() != PLUS and opstk.top() != MINUS and opstk.top() != PARENT_LEFT){
                     calculateOnce(intstk, opstk);
                 }
                 opstk.push(tokens[i] == "*"?TIME:DIVIDE);
             }else if(tokens[i] == "+" or tokens[i] == "-"){
-                while(!opstk.empty() and opstk.top() != PLUS and opstk.top() != MINUS and opstk.top() != PARENT_LEFT){
+                while(!opstk.empty() and opstk.top() != PARENT_LEFT){
                     calculateOnce(intstk, opstk);
                 }
                 opstk.push(tokens[i] == "+"?PLUS:MINUS);
@@ -94,7 +93,7 @@ public:
         intstk.pop();
         int second = intstk.top();
         intstk.pop();
-        int result = getCalculate(first, second, opt);
+        int result = getCalculate(second, first, opt);
         intstk.push(result);
     }
     
