@@ -1,3 +1,20 @@
+/*
+1, priority.
+     ( )  0
+     ^    1
+     / *  2
+     + =  3
+2, use two stacks: one for operators(optstk) and another for numbers(intstk);
+3, when '^' is met, add it to optstk directly;
+4, when '*' or '/' is met, calculate all '^'s on top of stack from left to right before add '*' or '/' to optstk;
+5, when '+' or '-' is met, calculate all '^'s on top of stack from left to right, then calculate all '*'s and '/'s
+   on top of stack from left to right, finally add '+' or '-' to opstk;
+5, when '(' is met, add it to number stack directly;
+6, when ')' is met, all the operator between '(' and ')' should be calculated immediately from left to right;
+7, above rules makes sure that priorities of operators on optstk is decremental from bottom to top of the stack,
+   of course in each pair of '(' and ')';
+8, reverse order of tokens first so that the "from left to right" can be implemented easily. 
+*/
 class Solution {
 public:
     enum op{PLUS, MINUS, TIME, DIVIDE, POWER, PARENT_LEFT, PARENT_RIGHT};
